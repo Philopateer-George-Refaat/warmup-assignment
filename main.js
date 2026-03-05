@@ -13,105 +13,96 @@ function getShiftDuration(startTime, endTime) {
     let minutes = 0;
     let seconds = 0;
 
-    if(startTime.includes('am') && endTime.includes('am')) {
-        hours = parseInt(endTime.slice(0,1)) - parseInt(startTime.slice(0,1));
-        minutes = parseInt(endTime.slice(2,4)) - parseInt(startTime.slice(2,4));
-        seconds = parseInt(endTime.slice(6,8)) - parseInt(startTime.slice(6,8));
-        if(hours > 12 && minutes > 59 && seconds > 59) {
-            return 'Invalid time input';
-        }
-          if(seconds < 0) {
-            minutes--;
-            seconds += 60;
-        }  
-        if(minutes < 0) {
-            hours--;
-            minutes += 60;
-        }   
-    
+const endTimes = endTime.split(':');
+const startTimes = startTime.split(':');
 
-        if(minutes.toString().length < 2)
-            minutes = '0' + minutes;
-        if(seconds.toString().length < 2)
-            seconds = '0' + seconds;
+    startTimes[2] = startTimes[2].split(' ')[0];
+    endTimes[2] = endTimes[2].split(' ')[0];
 
-        duration = hours + ':' + minutes + ':' + seconds;
-}
-else if(startTime.includes('am') && endTime.includes('pm')) {
-    hours = parseInt(endTime.slice(0,1)) + 12 - parseInt(startTime.slice(0,1));
-    minutes = parseInt(endTime.slice(2,4)) - parseInt(startTime.slice(2,4));
-    seconds = parseInt(endTime.slice(6,8)) - parseInt(startTime.slice(6,8));  
-     if(hours > 12 && minutes > 59 && seconds > 59) {
-            return 'Invalid time input';
-        }  
-      if(seconds < 0) {
-            minutes--;
-            seconds += 60;
-        }  
-        if(minutes < 0) {
-            hours--;
-            minutes += 60;
-        }   
-         
-       if(minutes.toString().length < 2)
-            minutes = '0' + minutes;
-        if(seconds.toString().length < 2)
-            seconds = '0' + seconds;
+   
+    if (parseInt(endTimes[0]) > 12 || parseInt(startTimes[0]) > 12
+        || parseInt(endTimes[1]) > 59 || parseInt(startTimes[1]) > 59
+        || parseInt(endTimes[2]) > 59 || parseInt(startTimes[2]) > 59
+        || parseInt(endTimes[0]) < 1 || parseInt(startTimes[0]) < 1) {
+          return 'Invalid يا حبيبي';
+    }
 
+  
+    if (startTime.toLowerCase().includes('am') && endTime.toLowerCase().includes('am')) {
+       let startHour = parseInt(startTimes[0]);
+        let endHour = parseInt(endTimes[0]);
 
-    duration = hours + ':' + minutes + ':' + seconds;
-}
-else if(startTime.includes('pm') && endTime.includes('pm')) {
-    hours = parseInt(endTime.slice(0,1)) - parseInt(startTime.slice(0,1));
-    minutes = parseInt(endTime.slice(2,4)) - parseInt(startTime.slice(2,4));
-    seconds = parseInt(endTime.slice(6,8)) - parseInt(startTime.slice(6,8));    
-     if(hours > 12 && minutes > 59 && seconds > 59) {
-            return 'Invalid time input';
-        }
-      if(seconds < 0) {
-            minutes--;
-            seconds += 60;
-        }  
-        if(minutes < 0) {
-            hours--;
-            minutes += 60;
-        }   
+        if(startHour == 12) startHour = 0;
+        if(endHour == 12) endHour = 0;
+
+        hours = endHour - startHour;
+        minutes = parseInt(endTimes[1]) - parseInt(startTimes[1]);
+        seconds = parseInt(endTimes[2]) - parseInt(startTimes[2]);
+
         
-        if(minutes.toString().length < 2)
-            minutes = '0' + minutes;
-        if(seconds.toString().length < 2)
-            seconds = '0' + seconds;
 
-    duration = hours + ':' + minutes + ':' + seconds;
-}
-else if(startTime.includes('pm') && endTime.includes('am')) {
-    hours = parseInt(endTime.slice(0,1)) + 12 - parseInt(startTime.slice(0,1));
-    minutes = parseInt(endTime.slice(2,4)) - parseInt(startTime.slice(2,4));
-    seconds = parseInt(endTime.slice(6,8)) - parseInt(startTime.slcie(6,8));    
-     if(hours > 12 && minutes > 59 && seconds > 59) {
-            return 'Invalid time input';
+    } else if (startTime.toLowerCase().includes('am') && endTime.toLowerCase().includes('pm')) {
+
+    let startHour = parseInt(startTimes[0]);
+    let endHour = parseInt(endTimes[0]);
+
+    if(startHour == 12) startHour = 0;
+    if(endHour != 12) endHour += 12;
+
+    hours = endHour - startHour;
+    minutes = parseInt(endTimes[1]) - parseInt(startTimes[1]);
+    seconds = parseInt(endTimes[2]) - parseInt(startTimes[2]);
+
+       
+     
+
+    } else if (startTime.toLowerCase().includes('pm') && endTime.toLowerCase().includes('pm')) {
+
+    let startHour = parseInt(startTimes[0]);
+    let endHour = parseInt(endTimes[0]);
+
+    if(startHour != 12) startHour += 12;
+    if(endHour != 12) endHour += 12;
+
+    hours = endHour - startHour;
+    minutes = parseInt(endTimes[1]) - parseInt(startTimes[1]);
+    seconds = parseInt(endTimes[2]) - parseInt(startTimes[2]);
+        
+
+    } else if (startTime.toLowerCase().includes('pm') && endTime.toLowerCase().includes('am')) {
+
+    let startHour = parseInt(startTimes[0]);
+    let endHour = parseInt(endTimes[0]);
+
+    if(startHour != 12) startHour += 12;
+    if(endHour == 12) endHour = 0;
+
+    hours = (24 - startHour) + endHour;
+    minutes = parseInt(endTimes[1]) - parseInt(startTimes[1]);
+    seconds = parseInt(endTimes[2]) - parseInt(startTimes[2]);
+    }
+
+        if (seconds < 0) {
+        minutes--;
+        seconds += 60;
         }
-      if(seconds < 0) {
-            minutes--;
-            seconds += 60;
-        }  
-        if(minutes < 0) {
-            hours--;
-            minutes += 60;
-        }   
+        if (minutes < 0) {
+        hours--;
+        minutes += 60;
+        }
+        if (hours < 0) {
+        hours += 24; 
+        }
     
+    if (minutes.toString().length < 2) 
+        minutes = '0' + minutes;
+    if (seconds.toString().length < 2) 
+        seconds = '0' + seconds;
 
-     if(minutes.toString().length < 2)
-            minutes = '0' + minutes;
-        if(seconds.toString().length < 2)
-            seconds = '0' + seconds;
-
-
+    
     duration = hours + ':' + minutes + ':' + seconds;
-}
     return duration;
 }
-
 // ============================================================
 // Function 2: getIdleTime(startTime, endTime)
 // startTime: (typeof string) formatted as hh:mm:ss am or hh:mm:ss pm
