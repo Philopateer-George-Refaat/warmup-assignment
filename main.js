@@ -160,13 +160,23 @@ function getIdleTime(startTime, endTime) { //8:00AM and 10:00PM(inclusive)
     let workEndTotal = workEnd * 3600;
     let idleTotal = 0;
 
-        if (startTotal < workStartTotal) {
-        idleTotal += workStartTotal - startTotal;
+        if (endTotal <= workStartTotal) {
+            idleTotal = endTotal - startTotal;
         }
-        if (endTotal > workEndTotal) {
-        idleTotal += endTotal - workEndTotal;
+        else if (startTotal >= workEndTotal) {
+            idleTotal = endTotal - startTotal;
         }
         
+        else {
+            if (startTotal < workStartTotal) {
+                idleTotal += workStartTotal - startTotal;
+            }
+
+            if (endTotal > workEndTotal) {
+                idleTotal += endTotal - workEndTotal;
+            }
+        }
+
     idleHours = Math.floor(idleTotal / 3600);
     idleMinutes = Math.floor((idleTotal % 3600) / 60);
     idleSeconds = idleTotal % 60;
