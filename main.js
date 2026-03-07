@@ -245,7 +245,30 @@ function getActiveTime(shiftDuration, idleTime) {
 // Returns: boolean
 // ============================================================
 function metQuota(date, activeTime) {
-    // TODO: Implement this function
+    const activeTimes = activeTime.split(':');
+
+    activeTimes[2] = activeTimes[2].split(' ')[0];
+    let activeHours = parseInt(activeTimes[0]);
+    let activeMinutes = parseInt(activeTimes[1]);
+    let activeSeconds = parseInt(activeTimes[2]);
+
+    let activeTotal = activeHours * 3600 + activeMinutes * 60 + activeSeconds;
+    let quotaTotal = 8 * 3600 + 24*60;
+    let quotaEid = 6 * 3600;
+    let met = false;
+
+    let dates = date.split('-');
+    let month = parseInt(dates[1]);
+    let day = parseInt(dates[2]);
+    
+    if (month === 4 && (day >=10 && day <= 30)) {
+        if(activeTotal >= quotaEid)
+        met = true;
+    }
+        if(activeTotal >= quotaTotal)
+        met = true;
+
+    return met;
 }
 
 // ============================================================
