@@ -109,9 +109,80 @@ const startTimes = startTime.split(':');
 // endTime: (typeof string) formatted as hh:mm:ss am or hh:mm:ss pm
 // Returns: string formatted as h:mm:ss
 // ============================================================
-function getIdleTime(startTime, endTime) {
-    // TODO: Implement this function
+function getIdleTime(startTime, endTime) { //8:00AM and 10:00PM(inclusive)
+    let idleDuration = '';
+    let idleHours = 0;
+    let idleMinutes = 0;
+    let idleSeconds = 0;
+    const workStart = 8;
+    const workEnd = 22;
+
+    const endTimes = endTime.split(':');
+    const startTimes = startTime.split(':');
+
+    startTimes[2] = startTimes[2].split(' ')[0];
+    endTimes[2] = endTimes[2].split(' ')[0];
+
+    if (parseInt(endTimes[0]) > 12 || parseInt(startTimes[0]) > 12
+        || parseInt(endTimes[1]) > 59 || parseInt(startTimes[1]) > 59
+        || parseInt(endTimes[2]) > 59 || parseInt(startTimes[2]) > 59
+        || parseInt(endTimes[0]) < 1 || parseInt(startTimes[0]) < 1) {
+          return 'Invalid يا حبيبي';
+    }
+
+    let startHours = parseInt(startTimes[0]);
+    let endHours = parseInt(endTimes[0]);
+    let startMinutes = parseInt(startTimes[1]);
+    let endMinutes = parseInt(endTimes[1]);
+    let startSeconds = parseInt(startTimes[2]);
+    let endSeconds = parseInt(endTimes[2]);
+
+    
+    if(startTime.toLowerCase().includes('am')) {
+        if(startHours == 12) startHours = 0;
+    }
+
+    if(startTime.toLowerCase().includes('pm')) {
+        if(startHours != 12) startHours += 12;
+    }
+
+    if(endTime.toLowerCase().includes('am')) {
+        if(endHours == 12) endHours = 0;
+    }
+
+    if(endTime.toLowerCase().includes('pm')) {
+        if(endHours != 12) endHours += 12;
+    }
+
+    let startTotal = startHours * 3600 + startMinutes * 60 + startSeconds;
+    let endTotal = endHours * 3600 + endMinutes * 60 + endSeconds;
+    let workStartTotal = workStart * 3600;
+    let workEndTotal = workEnd * 3600;
+    let idleTotal = 0;
+
+        if (startTotal < workStartTotal) {
+        idleTotal += workStartTotal - startTotal;
+        }
+        if (endTotal > workEndTotal) {
+        idleTotal += endTotal - workEndTotal;
+        }
+        
+    idleHours = Math.floor(idleTotal / 3600);
+    idleMinutes = Math.floor((idleTotal % 3600) / 60);
+    idleSeconds = idleTotal % 60;
+
+  
+    if (idleMinutes.toString().length < 2) 
+        idleMinutes = '0' + idleMinutes;
+    if (idleSeconds.toString().length < 2) 
+        idleSeconds = '0' + idleSeconds;
+
+
+    idleDuration = idleHours + ':' + idleMinutes + ':' + idleSeconds;
+        return idleDuration;
+
 }
+
 
 // ============================================================
 // Function 3: getActiveTime(shiftDuration, idleTime)
