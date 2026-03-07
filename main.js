@@ -255,7 +255,7 @@ function metQuota(date, activeTime) {
     let activeTotal = activeHours * 3600 + activeMinutes * 60 + activeSeconds;
     let quotaTotal = 8 * 3600 + 24*60;
     let quotaEid = 6 * 3600;
-    let met = false;
+    let metQuota = false;
 
     let dates = date.split('-');
     let month = parseInt(dates[1]);
@@ -263,12 +263,15 @@ function metQuota(date, activeTime) {
     
     if (month === 4 && (day >=10 && day <= 30)) {
         if(activeTotal >= quotaEid)
-        met = true;
+        metQuota = true;
     }
+    else{
         if(activeTotal >= quotaTotal)
-        met = true;
+        metQuota = true;
+    }
+       
 
-    return met;
+    return metQuota;
 }
 
 // ============================================================
@@ -278,7 +281,33 @@ function metQuota(date, activeTime) {
 // Returns: object with 10 properties or empty object {}
 // ============================================================
 function addShiftRecord(textFile, shiftObj) {
-    // TODO: Implement this function
+    let driverID = shiftObj.driverID;
+    let driverName = shiftObj.driverName;
+    let date = shiftObj.date;
+    let startTime = shiftObj.startTime;
+    let endTime = shiftObj.endTime;
+    let shiftDuration = getShiftDuration(startTime, endTime);
+    let idleTime = getIdleTime(startTime, endTime);
+    let activeTime = getActiveTime(shiftDuration, idleTime);
+    let quotaMet = metQuota(date, activeTime);
+
+        let newRecord =
+        driverID + "," +
+        driverName + "," +
+        date + "," +
+        startTime + "," +
+        endTime + "," +
+        shiftDuration + "," +
+        idleTime + "," +
+        activeTime + "," +
+        quotaMet + "\n";
+
+    try {
+        fs.appendFileSync(textFile, newRecord);
+        return shiftObj;
+    } catch (error) {
+        return {};
+    } 
 }
 
 // ============================================================
