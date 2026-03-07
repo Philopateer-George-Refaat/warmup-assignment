@@ -166,7 +166,7 @@ function getIdleTime(startTime, endTime) { //8:00AM and 10:00PM(inclusive)
         else if (startTotal >= workEndTotal) {
             idleTotal = endTotal - startTotal;
         }
-        
+
         else {
             if (startTotal < workStartTotal) {
                 idleTotal += workStartTotal - startTotal;
@@ -201,7 +201,41 @@ function getIdleTime(startTime, endTime) { //8:00AM and 10:00PM(inclusive)
 // Returns: string formatted as h:mm:ss
 // ============================================================
 function getActiveTime(shiftDuration, idleTime) {
-    // TODO: Implement this function
+    let activeDuration = '';
+
+    const shiftParts = shiftDuration.split(':');
+    const idleParts = idleTime.split(':');
+
+    shiftParts[2] = shiftParts[2].split(' ')[0];
+    idleParts[2] = idleParts[2].split(' ')[0];
+
+   
+
+    let shiftHours = parseInt(shiftParts[0]);
+    let shiftMinutes = parseInt(shiftParts[1]);
+    let shiftSeconds = parseInt(shiftParts[2]);
+    let idleHours = parseInt(idleParts[0]);
+    let idleMinutes = parseInt(idleParts[1]);
+    let idleSeconds = parseInt(idleParts[2]);
+
+
+    let shiftTotal = shiftHours * 3600 + shiftMinutes * 60 + shiftSeconds;
+    let idleTotal = idleHours * 3600 + idleMinutes * 60 + idleSeconds;
+    let activeTotal = shiftTotal - idleTotal;
+
+    let activeHours = Math.floor(activeTotal / 3600);
+    let activeMinutes = Math.floor((activeTotal % 3600) / 60);
+    let activeSeconds = activeTotal % 60;
+
+    if (activeMinutes.toString().length < 2) {
+        activeMinutes = '0' + activeMinutes;
+    }
+    if (activeSeconds.toString().length < 2) {
+        activeSeconds = '0' + activeSeconds;
+    }
+
+    activeDuration = activeHours + ':' + activeMinutes + ':' + activeSeconds;
+    return activeDuration;
 }
 
 // ============================================================
