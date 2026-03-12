@@ -322,27 +322,25 @@ function setBonus(textFile, driverID, date, newValue) {
     try{
         let data = fs.readFileSync(textFile, 'utf-8');
         let lines = data.split('\n');
-        let updatedLines = [];
+        
         let isFound = false;
 
-        for (let i = 0; i < lines.length; i++) {
-            let line = lines[i];
-            if (line.includes(driverID) && line.includes(date)) {
-                let parts = line.split(',');
-                if (parts[0] === driverID && parts[2] === date) {
-                    parts[9] = newValue.toString();
-                    line = parts.join(',');
+        for (let i = 1; i < lines.length; i++) {
+            if (!lines[i].trim()) continue;
+                let columns = lines[i].split(',');
+
+                if (columns[0] === driverID && columns[2] === date) {
+                    columns[9] = newValue.toString();
+                    lines[i] = columns.join(',');
                     isFound = true;
                 }
-            }
-            updatedLines.push(line);
         }
 
         if (isFound) {
-            fs.writeFileSync(textFile, updatedLines.join('\n'));
+            fs.writeFileSync(textFile, lines.join('\n'));
         }
     } catch (error) {
-         console.error('Error updating bonus:', error); 
+         console.error('Error updating bonus(حط الفايل ياعم):', error); 
     }
 }
 
@@ -354,7 +352,41 @@ function setBonus(textFile, driverID, date, newValue) {
 // Returns: number (-1 if driverID not found)
 // ============================================================
 function countBonusPerMonth(textFile, driverID, month) {
-    // TODO: Implement this function
+try{
+        let data = fs.readFileSync(textFile, 'utf-8');
+        let lines = data.split('\n');
+        let date = '';
+        let bounscounter = 0;
+        let isExist = false;
+
+        
+        for(let i = 1 ; i<lines.length ; i++){
+            if (!lines[i].trim()) continue;
+
+            let columns = lines[i].split(',');
+            date = columns[2].split('-');
+            let myMonth = date[1];
+
+            if(columns[0] === driverID ){
+             isExist = true;
+
+                if(parseInt(myMonth) === parseInt(month) && columns[9] === 'true'){
+                bounscounter++;
+                }
+            }
+        }
+
+
+        if(!isExist){
+            return -1;
+        }
+
+        return bounscounter;
+        
+        } catch (error) {
+        return -1;  
+        }
+
 }
 
 // ============================================================
