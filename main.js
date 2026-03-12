@@ -397,7 +397,48 @@ try{
 // Returns: string formatted as hhh:mm:ss
 // ============================================================
 function getTotalActiveHoursPerMonth(textFile, driverID, month) {
-    // TODO: Implement this function
+    try{
+        let data = fs.readFileSync(textFile, 'utf-8');
+        let lines = data.split('\n');
+        let date = '';
+        let totalActiveInSeconds = 0;
+         for(let i = 1 ; i<lines.length ; i++){
+            if (!lines[i].trim()) continue; 
+
+            let columns = lines[i].split(',');
+            date = columns[2].split('-');
+            let myMonth = date[1];
+
+            if(columns[0] === driverID ){
+                if(parseInt(myMonth) === parseInt(month)){
+                let activeTime = columns[7].split(':');
+                activeTime[2] = activeTime[2].split(' ')[0];
+                let activeHours = parseInt(activeTime[0]);
+                let activeMinutes = parseInt(activeTime[1]);
+                let activeSeconds = parseInt(activeTime[2]);
+                totalActiveInSeconds += activeHours * 3600 + activeMinutes * 60 + activeSeconds;
+                }
+            }
+        
+        }
+
+        let totalActiveHours = Math.floor(totalActiveInSeconds / 3600);
+        let totalActiveMinutes = Math.floor((totalActiveInSeconds % 3600) / 60);
+        let totalActiveSeconds = totalActiveInSeconds % 60; 
+
+        if (totalActiveMinutes.toString().length < 2) {
+            totalActiveMinutes = '0' + totalActiveMinutes;
+        }
+        if (totalActiveSeconds.toString().length < 2) {
+            totalActiveSeconds = '0' + totalActiveSeconds;
+        }
+
+        return totalActiveHours + ':' + totalActiveMinutes + ':' + totalActiveSeconds;
+
+    }
+    catch (error) {
+        return '0:00:00';
+    }
 }
 
 // ============================================================
