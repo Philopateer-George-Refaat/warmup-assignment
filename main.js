@@ -281,16 +281,32 @@ function metQuota(date, activeTime) {
 // Returns: object with 10 properties or empty object {}
 // ============================================================
 function addShiftRecord(textFile, shiftObj) {
+try{
+    let data = fs.readFileSync(textFile, 'utf-8');
+    let lines = data.split('\n');
+
     let driverID = shiftObj.driverID;
     let driverName = shiftObj.driverName;
     let date = shiftObj.date;
     let startTime = shiftObj.startTime;
     let endTime = shiftObj.endTime;
+
     let shiftDuration = getShiftDuration(startTime, endTime);
     let idleTime = getIdleTime(startTime, endTime);
     let activeTime = getActiveTime(shiftDuration, idleTime);
     let quotaMet = metQuota(date, activeTime);
     let hasBonus = false;
+
+       for (let i = 1; i < lines.length; i++) {
+
+            if (!lines[i].trim()) continue;
+
+            let columns = lines[i].split(',');
+
+            if (columns[0] === driverID && columns[2] === date) {
+                return {};
+            }
+        }
 
         let newRecord =
         driverID + "," +
@@ -304,13 +320,44 @@ function addShiftRecord(textFile, shiftObj) {
         quotaMet + "," +
         hasBonus + "\n";
 
-    try {
-        fs.appendFileSync(textFile, newRecord);
-        return shiftObj;
-    } catch (error) {
-        return {};
-    } 
+        let insertIndex = lines.length;
 
+        for (let i = 1; i < lines.length; i++) {
+
+            if (!lines[i].trim()) continue;
+
+            let columns = lines[i].split(',');
+
+            if (columns[0] === driverID) {
+                insertIndex = i + 1;
+            }
+        }
+
+        lines.splice(insertIndex, 0, newRecord);
+
+        fs.writeFileSync(textFile, lines.join('\n'));
+   
+           return {
+            driverID,
+            driverName,
+            date,
+            startTime,
+            endTime,
+            shiftDuration,
+            idleTime,
+            activeTime,
+            quotaMet,
+            hasBonus
+        };
+
+}
+    
+    
+
+catch (error) {
+    console.error('Error adding shift record(لامؤاخذة)', error); 
+    return {};
+}
 }
 
 // ============================================================
@@ -373,7 +420,7 @@ try{
             if(columns[0] === driverID ){
              isExist = true;
 
-                if(parseInt(myMonth) === parseInt(month) && columns[9] === 'true'){
+                if(parseInt(myMonth) === parseInt(month) && columns[9].trim() === 'true'){
                 bounscounter++;
                 }
             }
@@ -539,7 +586,7 @@ function getRequiredHoursPerMonth(textFile, rateFile, bonusCount, driverID, mont
 function getNetPay(driverID, actualHours, requiredHours, rateFile) {
     try{
         let dataRate = fs.readFileSync(rateFile, 'utf-8')
-        let lines = data.split('\n');
+        let lines = dataRate.split('\n');
         let basePay = 0;
         let tier = 0;
 
