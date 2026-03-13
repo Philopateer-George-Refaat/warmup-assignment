@@ -156,6 +156,10 @@ function getIdleTime(startTime, endTime) { //8:00AM and 10:00PM(inclusive)
 
     let startTotal = startHours * 3600 + startMinutes * 60 + startSeconds;
     let endTotal = endHours * 3600 + endMinutes * 60 + endSeconds;
+
+        if (endTotal < startTotal) {
+        endTotal += 24 * 3600;
+    }
     let workStartTotal = workStart * 3600;
     let workEndTotal = workEnd * 3600;
     let idleTotal = 0;
@@ -176,6 +180,7 @@ function getIdleTime(startTime, endTime) { //8:00AM and 10:00PM(inclusive)
                 idleTotal += endTotal - workEndTotal;
             }
         }
+
 
     idleHours = Math.floor(idleTotal / 3600);
     idleMinutes = Math.floor((idleTotal % 3600) / 60);
@@ -261,7 +266,7 @@ function metQuota(date, activeTime) {
     let month = parseInt(dates[1]);
     let day = parseInt(dates[2]);
     
-    if (month === 4 && (day >=10 && day <= 30)) {
+    if (month === 4 && (day >=10 && day <= 30) && parseInt(dates[0]) === 2025) {
         if(activeTotal >= quotaEid)
         metQuota = true;
     }
@@ -536,7 +541,7 @@ function getRequiredHoursPerMonth(textFile, rateFile, bonusCount, driverID, mont
                     if (weekday === dayOff) {
                         continue;
                     }
-                    if (myMonth === 4 && myDay >= 10 && myDay <= 30) {
+                    if (myMonth === 4 && myDay >= 10 && myDay <= 30 && dateParts[0] === '2025')  {
                         requiredSeconds += 6 * 3600;
                     }
                     else {
@@ -665,3 +670,4 @@ module.exports = {
     getRequiredHoursPerMonth,
     getNetPay
 };
+
