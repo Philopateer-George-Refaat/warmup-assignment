@@ -656,6 +656,7 @@ function getNetPay(driverID, actualHours, requiredHours, rateFile) {
     catch (error) {
         return 0;
     }
+    
 }
 
 module.exports = {
